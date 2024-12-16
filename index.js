@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 
 // Setting up cors
-const allowedOrigins = ['https://united-hp.netlify.app'];
+const allowedOrigins = ['https://mtechsystem.netlify.app/'];
 const corsOptions = {
   credentials: true,
   origin: function (origin, callback) {

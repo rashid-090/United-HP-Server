@@ -5,7 +5,8 @@ const City = require("../../model/cityModel");
 
 const getDealers = async (req, res) => {
     try {
-        const { district, city } = req.query;
+        const { district, city, page = 1, limit = 6,
+        } = req.query;
 
 
         let filter = {};
@@ -20,6 +21,8 @@ const getDealers = async (req, res) => {
         }
         console.log(filter);
 
+        const skip = (page - 1) * limit;
+
 
         // Query the dealers with the filter
         const dealers = await User.find(
@@ -32,15 +35,16 @@ const getDealers = async (req, res) => {
                 isEmailVerified: 0,
             }
         ).populate("district city")
+            .skip(skip).limit(limit)
             .sort({ createdAt: -1 });
+
 
 
         if (dealers.length === 0) {
             throw new Error("No dealers found");
         }
-        console.log(dealers);
 
-        const totalAvailableDealers = await User.countDocuments({ role: "admin", ...filter,isActive:true });
+        const totalAvailableDealers = await User.countDocuments({ role: "admin", ...filter, isActive: true });
 
         res.status(200).json({ dealers, totalAvailableDealers });
     } catch (error) {
