@@ -7,7 +7,8 @@ const createToken = (_id) => {
 };
 
 const cookieConfig = {
-  secure: true,
+  sameSite: "none", // in order to response to both first-party and cross-site requests
+  secure: "auto", // it should set automatically to secure if is https.
   httpOnly: true,
   maxAge: 1000 * 60 * 60 * 24,
 };
@@ -73,7 +74,11 @@ const loginUser = async (req, res) => {
 };
 
 const logoutUser = async (req, res) => {
-  res.clearCookie("user_token");
+  res.clearCookie("user_token", {
+    sameSite: "none",
+    secure: true,
+    httpOnly: true,
+  });
 
   res.status(200).json({ msg: "Logged out Successfully" });
 };

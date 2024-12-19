@@ -1,3 +1,4 @@
+const { default: puppeteer } = require("puppeteer");
 const User = require("../../model/userModel");
 
 // Getting all Admins to list on super admin dashboard
@@ -143,14 +144,37 @@ const addAdmin = async (req, res) => {
 const updateAdmin = async (req, res) => {
   try {
     const { id } = req.params;
-    const data = req.body
+    const data = req.body;
     console.log(req.body);
 
-
     const files = req?.files;
-    console.log(files);
 
+    // Function to get full Google Maps URL
+    const getFullGoogleMapsUrl = async (shortUrl) => {
+      const browser = await puppeteer.launch({ headless: true }); // Start a headless browser
+      const page = await browser.newPage(); // Open a new page
+      await page.goto(shortUrl, { waitUntil: 'networkidle0' }); // Go to the shortened Google Maps URL
 
+      // Get the full URL after the page loads
+      const fullUrl = await page.url();
+
+      await browser.close(); // Close the browser
+      return fullUrl;
+    };
+
+    // Wait for the full URL if gMapLinkShorten is provided
+    if (data.gMapLinkShorten) {
+      try {
+        const fullUrl = await getFullGoogleMapsUrl(data.gMapLinkShorten); // Wait for the full URL
+        data.gMapLink = fullUrl; // Update the gMapLink field
+        console.log("Full URL:", fullUrl);
+      } catch (error) {
+        console.error("Error fetching full Google Maps URL:", error);
+        return res.status(500).json({ error: "Failed to fetch full Google Maps URL" });
+      }
+    }
+
+    console.log(data, "After scrapping");
 
     // Check if there are files to update
     if (files && files.length > 0) {
@@ -172,8 +196,7 @@ const updateAdmin = async (req, res) => {
       data.imgURL = existingImgURLs;
     }
 
-
-
+    // Update the admin data in the database
     const admin = await User.findByIdAndUpdate(
       id,
       { $set: { ...data } },
@@ -189,6 +212,7 @@ const updateAdmin = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
 
 const deleteAdmin = async (req, res) => {
   try {

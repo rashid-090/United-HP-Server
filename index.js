@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 
 // Setting up cors
-const allowedOrigins = ['https://mtechsystem.netlify.app'];
+const allowedOrigins = [process.env.CLIENT_URL];
 const corsOptions = {
   credentials: true,
   origin: function (origin, callback) {
@@ -27,7 +27,6 @@ const corsOptions = {
   
 };
 
-// ss
 
 app.use(cors(corsOptions));
 
