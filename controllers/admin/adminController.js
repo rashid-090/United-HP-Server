@@ -3,7 +3,10 @@ const User = require("../../model/userModel");
 
 // Function to get full Google Maps URL
 const getFullGoogleMapsUrl = async (shortUrl) => {
-  const browser = await puppeteer.launch({ headless: true }); // Start a headless browser
+  const browser = await puppeteer.launch({
+    headless: true,            // Run in headless mode (no UI)
+    args: ['--no-sandbox', '--disable-setuid-sandbox']  // Bypass sandboxing restrictions
+  });
   const page = await browser.newPage(); // Open a new page
   await page.goto(shortUrl, { waitUntil: 'networkidle0' }); // Go to the shortened Google Maps URL
 

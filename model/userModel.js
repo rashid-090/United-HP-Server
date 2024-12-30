@@ -3,7 +3,6 @@ const bcrypt = require("bcrypt");
 const validator = require("validator");
 const District = require("./districtModel");
 const City = require("./cityModel");
-const { default: puppeteer } = require("puppeteer");
 
 const { Schema } = mongoose;
 
@@ -12,6 +11,7 @@ const UserSchema = new Schema(
     name: {
       type: String,
       required: true,
+      unique:true
     },
     email: {
       type: String,
@@ -119,30 +119,6 @@ UserSchema.statics.signup = async function (
 
 
 
-  // Function to get full Google Maps URL
-  const getFullGoogleMapsUrl = async (shortUrl) => {
-    const browser = await puppeteer.launch({ headless: true }); // Start a headless browser
-    const page = await browser.newPage(); // Open a new page
-    await page.goto(shortUrl, { waitUntil: 'networkidle0' }); // Go to the shortened Google Maps URL
-
-    // Get the full URL after the page loads
-    const fullUrl = await page.url();
-
-    await browser.close(); // Close the browser
-    return fullUrl;
-  };
-
-  // Wait for the full URL if gMapLinkShorten is provided
-  if (userCredentials.gMapLinkShorten) {
-    try {
-      const fullUrl = await getFullGoogleMapsUrl(userCredentials.gMapLinkShorten); // Wait for the full URL
-      userCredentials.gMapLink = fullUrl; // Update the gMapLink field
-      console.log("Full URL:", fullUrl);
-    } catch (error) {
-      console.error("Error fetching full Google Maps URL:", error);
-      return res.status(500).json({ error: "Failed to fetch full Google Maps URL" });
-    }
-  }
 
 
 

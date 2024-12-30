@@ -23,7 +23,7 @@ const getDistricts = async (req, res) => {
 
         const skip = (page - 1) * limit;
 
-        const districts = await District.find(filter).skip(skip).limit(limit);
+        const districts = await District.find(filter).skip(skip).limit(limit).sort({ name: 1 });
 
         const totalAvailableDistricts = await District.countDocuments(filter);
 
