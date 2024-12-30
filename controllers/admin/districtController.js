@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 // Getting all Districts to list on admin dashboard
 const getDistricts = async (req, res) => {
     try {
-        const { status, search, page = 1, limit = 10, district, city } = req.query;
+        const { status, search, page = 1, limit = 100, district, city } = req.query;
 
         let filter = {};
 

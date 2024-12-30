@@ -92,7 +92,7 @@ const sendOTPMail = async (email, otp) => {
             <div class="footer">
                 <p>Best regards,</p>
                 <p>UnitedHP</p>
-                <p>&copy; 2023 UnitedHP. All rights reserved.</p>
+                <p>&copy; 2024 UnitedHP. All rights reserved.</p>
             </div>
         </div>
     </body>

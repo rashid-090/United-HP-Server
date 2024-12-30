@@ -1,6 +1,57 @@
 const { default: puppeteer } = require("puppeteer");
 const User = require("../../model/userModel");
 
+// Function to get full Google Maps URL
+const getFullGoogleMapsUrl = async (shortUrl) => {
+  const browser = await puppeteer.launch({ headless: true }); // Start a headless browser
+  const page = await browser.newPage(); // Open a new page
+  await page.goto(shortUrl, { waitUntil: 'networkidle0' }); // Go to the shortened Google Maps URL
+
+  // Get the full URL after the page loads
+  const fullUrl = await page.url();
+
+  await browser.close(); // Close the browser
+  return fullUrl;
+};
+const extractLatLongFromUrl = (url) => {
+  try {
+    // First try to find coordinates in the URL path after !3d and !4d
+    const pathMatch = url.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+    if (pathMatch) {
+
+      return {
+        lat: parseFloat(pathMatch[1]),
+        lng: parseFloat(pathMatch[2]),
+      };
+    }
+
+    // If not found, try to find coordinates after !8m2!3d and !4d
+    const locationMatch = url.match(/!8m2!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+    if (locationMatch) {
+
+      return {
+        lat: parseFloat(locationMatch[1]),
+        lng: parseFloat(locationMatch[2]),
+      };
+    }
+
+    // Fallback to @coordinates if needed
+    const atMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (atMatch) {
+
+      return {
+        lat: parseFloat(atMatch[1]),
+        lng: parseFloat(atMatch[2]),
+      };
+    }
+
+    return { latitude: null, longitude: null };
+  } catch (error) {
+    console.log("Error parsing Google Maps URL:", error);
+    return { latitude: null, longitude: null };
+  }
+};
+
 // Getting all Admins to list on super admin dashboard
 const getAdmins = async (req, res) => {
   try {
@@ -15,7 +66,6 @@ const getAdmins = async (req, res) => {
       endingDate,
 
     } = req.query;
-    console.log(req.query);
 
 
 
@@ -47,8 +97,6 @@ const getAdmins = async (req, res) => {
 
     // CIty filter
     if (city) {
-      console.log("city", city);
-
       filter.city = city; // City district filter
     }
 
@@ -64,7 +112,6 @@ const getAdmins = async (req, res) => {
       }
     }
     const skip = (page - 1) * limit;
-    console.log(skip);
 
 
     const admins = await User.find(
@@ -120,7 +167,33 @@ const addAdmin = async (req, res) => {
     const userCredentials = req.body;
 
     const files = req?.files;
-    console.log(files);
+
+    if (userCredentials.gMapLinkShorten) {
+      try {
+        const fullUrl = await getFullGoogleMapsUrl(userCredentials.gMapLinkShorten); // Wait for the full URL
+        userCredentials.gMapLink = fullUrl; // Update the gMapLink field
+        console.log("Full URL:", fullUrl);
+        const { lat, lng } = extractLatLongFromUrl(fullUrl);
+
+        if (lat && lng) {
+          const latitude = parseFloat(lat);
+          const longitude = parseFloat(lng);
+
+          if (isNaN(latitude) || isNaN(longitude)) {
+            return res.status(400).json({ error: "Invalid latitude or longitude values" });
+          }
+
+          userCredentials.location = {
+            type: "Point",
+            coordinates: [latitude, longitude], // GeoJSON requires [longitude, latitude]
+          };
+        }
+      } catch (error) {
+        console.error("Error fetching full Google Maps URL:", error);
+        return res.status(500).json({ error: "Failed to fetch full Google Maps URL" });
+      }
+    }
+
 
 
 
@@ -145,36 +218,37 @@ const updateAdmin = async (req, res) => {
   try {
     const { id } = req.params;
     const data = req.body;
-    console.log(req.body);
 
     const files = req?.files;
 
-    // Function to get full Google Maps URL
-    const getFullGoogleMapsUrl = async (shortUrl) => {
-      const browser = await puppeteer.launch({ headless: true }); // Start a headless browser
-      const page = await browser.newPage(); // Open a new page
-      await page.goto(shortUrl, { waitUntil: 'networkidle0' }); // Go to the shortened Google Maps URL
 
-      // Get the full URL after the page loads
-      const fullUrl = await page.url();
-
-      await browser.close(); // Close the browser
-      return fullUrl;
-    };
 
     // Wait for the full URL if gMapLinkShorten is provided
     if (data.gMapLinkShorten) {
       try {
         const fullUrl = await getFullGoogleMapsUrl(data.gMapLinkShorten); // Wait for the full URL
         data.gMapLink = fullUrl; // Update the gMapLink field
-        console.log("Full URL:", fullUrl);
+        const { lat, lng } = extractLatLongFromUrl(fullUrl);
+
+        if (lat && lng) {
+          const latitude = parseFloat(lat);
+          const longitude = parseFloat(lng);
+
+          if (isNaN(latitude) || isNaN(longitude)) {
+            return res.status(400).json({ error: "Invalid latitude or longitude values" });
+          }
+
+          data.location = {
+            type: "Point",
+            coordinates: [latitude, longitude], // GeoJSON requires [longitude, latitude]
+          };
+        }
       } catch (error) {
         console.error("Error fetching full Google Maps URL:", error);
         return res.status(500).json({ error: "Failed to fetch full Google Maps URL" });
       }
     }
 
-    console.log(data, "After scrapping");
 
     // Check if there are files to update
     if (files && files.length > 0) {
@@ -206,6 +280,8 @@ const updateAdmin = async (req, res) => {
     if (!admin) {
       throw Error("No Such Admin");
     }
+    console.log(admin.name);
+
 
     res.status(200).json({ admin });
   } catch (error) {

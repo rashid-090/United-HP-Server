@@ -8,6 +8,7 @@ const CitySchema = new Schema(
     name: {
       type: String,
       required: true,
+      unique: true
     },
     district: {
       type: Schema.Types.ObjectId,

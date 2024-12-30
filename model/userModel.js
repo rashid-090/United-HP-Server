@@ -71,6 +71,17 @@ const UserSchema = new Schema(
         type: String,
       }
     ],
+    location: {
+      type: {
+        type: String, // Must be "Point"
+        enum: ['Point'], // 'location.type' must be 'Point'
+        
+      },
+      coordinates: {
+        type: [Number], // [longitude, latitude]
+        
+      },
+    },
 
     isEmailVerified: {
       type: Boolean,
@@ -79,6 +90,9 @@ const UserSchema = new Schema(
   },
   { timestamps: true }
 );
+
+UserSchema.index({ location: '2dsphere' });
+
 
 UserSchema.statics.signup = async function (
   userCredentials,

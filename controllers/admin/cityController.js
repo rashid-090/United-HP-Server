@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const getCities = async (req, res) => {
     try {
         const { district } = req.body; // District ID from the request body
-        const { status, search, page = 1, limit = 10 } = req.query;
+        const { status, search, page = 1, limit = 100 } = req.query;
 
         let filter = {};
 
@@ -36,6 +36,8 @@ const getCities = async (req, res) => {
 
         res.status(200).json({ cities, totalAvailableCities });
     } catch (error) {
+        console.log(error);
+
         res.status(400).json({ error: error.message });
     }
 };

@@ -39,6 +39,8 @@ const getDealers = async (req, res) => {
             .sort({ createdAt: -1 });
 
 
+        console.log(dealers);
+
 
         if (dealers.length === 0) {
             throw new Error("No dealers found");
@@ -140,6 +142,82 @@ const getStore = async (req, res) => {
     }
 }
 
+const haversineDistance = (coords1, coords2) => {
+    const toRadians = (deg) => (deg * Math.PI) / 180;
+
+    console.log(coords1);
+    console.log(coords2);
+
+    if (!coords2) {
+        return
+    }
+
+
+    const [lat1, lon1] = coords1;
+    const [lat2, lon2] = coords2;
+
+    const R = 6371; // Radius of the Earth in kilometers
+    const dLat = toRadians(lat2 - lat1);
+    const dLon = toRadians(lon2 - lon1);
+
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRadians(lat1)) *
+        Math.cos(toRadians(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in kilometers
+};
+
+const findNearbyStores = async (latitude, longitude, maxDistance) => {
+    const allStores = await User.find({ role: 'admin', isActive: true });
+
+    const nearbyStores = allStores.filter((store) => {
+        const distance = haversineDistance(
+            [latitude, longitude],
+            store.location.coordinates
+        );
+        return distance <= maxDistance;
+    });
+
+    return nearbyStores;
+};
+
+
+const nearByDealers = async (req, res) => {
+    try {
+        const { latitude, longitude, page = 1, limit = 6 } = req.query;
+        const maxDistance = 5; // 5 km radius
+
+        // Parse page and limit to ensure they're integers
+        const pageNumber = Math.max(1, parseInt(page, 10));
+        const limitNumber = Math.max(1, parseInt(limit, 10));
+        const skip = (pageNumber - 1) * limitNumber;
+
+        // Fetch all nearby stores
+        const allStores = await findNearbyStores(
+            parseFloat(latitude),
+            parseFloat(longitude),
+            maxDistance
+        );
+
+        // Apply pagination
+        const paginatedStores = allStores.slice(skip, skip + limitNumber);
+
+        res.status(200).json({
+            totalStores: allStores.length,
+            totalPages: Math.ceil(allStores.length / limitNumber),
+            currentPage: pageNumber,
+            stores: paginatedStores,
+        });
+    } catch (error) {
+        console.error('Error fetching nearby stores:', error);
+        res.status(500).json({ error: 'An error occurred' });
+    }
+}
+
 
 
 
@@ -147,5 +225,6 @@ module.exports = {
     getDealers,
     getCities,
     getDistricts,
-    getStore
+    getStore,
+    nearByDealers
 }

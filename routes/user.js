@@ -1,8 +1,7 @@
 const express = require("express");
 const upload = require("../middleware/upload");
 const { getUserDataFirst, logoutUser, changePassword, editUser } = require("../controllers/userController");
-const { getDealers, getCities, getDistricts, getStore } = require("../controllers/user/dealerController");
-const puppeteer = require('puppeteer');
+const { getDealers, getCities, getDistricts, getStore, nearByDealers } = require("../controllers/user/dealerController");
 
 
 const router = express.Router();
@@ -22,9 +21,10 @@ router.get('/cities', getCities)
 
 router.get("/store/:id", getStore)
 
-const apiKey = 'AIzaSyBcjlttQjxYL_555TMSo9djWYKudW91E7M';
 // Edit User profile
 router.post("/edit-profile", upload.single("profileImgURL"), editUser);
+
+router.get('/nearby-dealers',nearByDealers)
 
 
 
