@@ -2,8 +2,8 @@ const User = require("../model/userModel");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
-const createToken = (_id) => {
-  return jwt.sign({ _id }, process.env.SECRET, { expiresIn: "1d" });
+const createToken = (_id, role, permissions) => {
+  return jwt.sign({ _id, role, permissions }, process.env.SECRET, { expiresIn: "1d" });
 };
 
 const cookieConfig = {
@@ -47,11 +47,17 @@ const signUpUser = async (req, res) => {
 
     const user = await User.signup(userCredentials, "superAdmin", true);
 
-    const token = createToken(user._id);
+    const token = createToken(user._id, user.role, user.permissions);
 
     res.cookie("user_token", token, cookieConfig);
 
-    res.status(200).json(user);
+    res.status(200).json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      permissions: user.permissions,
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -63,11 +69,17 @@ const loginUser = async (req, res) => {
   try {
     const user = await User.login(email, password);
 
-    const token = createToken(user._id);
+    const token = createToken(user._id, user.role, user.permissions);
 
     res.cookie("user_token", token, cookieConfig);
 
-    res.status(200).json(user);
+    res.status(200).json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      permissions: user.permissions,
+    });
   } catch (error) {
     res.status(401).json({ error: error.message });
   }

@@ -24,11 +24,13 @@ const corsOptions = {
       callback(new Error("Not allowed by CORS"));
     }
   },
-  
+
 };
 
 
 app.use(cors(corsOptions));
+
+
 
 
 app.use(express.json());
@@ -37,7 +39,22 @@ app.use(logger("dev"));
 // const adminRoutes = require("./routes/admin");
 const superAdminRoutes = require("./routes/superAdmin");
 const authRoutes = require("./routes/auth");
-const userRoutes = require('./routes/user')
+const userRoutes = require('./routes/user');
+const User = require("./model/userModel");
+
+app.put('/update-roles', async (req, res) => {
+  try {
+    // Update all documents where role is 'admin'
+    const result = await User.updateMany({ role: 'user' }, { $set: { role: 'admin' } });
+
+    res.status(200).json({
+      message: 'Roles updated successfully',
+      modifiedCount: result.modifiedCount, // Number of documents modified
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating roles', error });
+  }
+});
 
 
 
@@ -51,13 +68,15 @@ app.use("/api/super-admin", superAdminRoutes);
 
 
 
+
+
 mongoose
-    .connect(process.env.MONGO_URI)
-    .then(() => {
-        app.listen(process.env.PORT, () => {
-            console.log(`Listening on Port: ${process.env.PORT} - DB Connected`);
-        });
-    })
-    .catch((error) => {
-        console.log(error);
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    app.listen(process.env.PORT, () => {
+      console.log(`Listening on Port: ${process.env.PORT} - DB Connected`);
     });
+  })
+  .catch((error) => {
+    console.log(error);
+  });

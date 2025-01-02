@@ -26,7 +26,7 @@ const getDealers = async (req, res) => {
 
         // Query the dealers with the filter
         const dealers = await User.find(
-            { role: "admin", ...filter, isActive: true },
+            { role: "user", ...filter, isActive: true },
             {
                 password: 0,
                 dateOfBirth: 0,
@@ -46,7 +46,7 @@ const getDealers = async (req, res) => {
             throw new Error("No dealers found");
         }
 
-        const totalAvailableDealers = await User.countDocuments({ role: "admin", ...filter, isActive: true });
+        const totalAvailableDealers = await User.countDocuments({ role: "user", ...filter, isActive: true });
 
         res.status(200).json({ dealers, totalAvailableDealers });
     } catch (error) {

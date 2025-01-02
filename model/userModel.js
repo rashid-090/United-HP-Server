@@ -11,7 +11,7 @@ const UserSchema = new Schema(
     name: {
       type: String,
       required: true,
-      unique:true
+      unique: true
     },
     email: {
       type: String,
@@ -36,7 +36,10 @@ const UserSchema = new Schema(
     gMapLinkShorten: {
       type: String
     },
-
+    permissions: {
+      type: [String],
+      default: []
+    }, // Array to store permissions
     openingTime: {
       type: String
     },
@@ -75,11 +78,11 @@ const UserSchema = new Schema(
       type: {
         type: String, // Must be "Point"
         enum: ['Point'], // 'location.type' must be 'Point'
-        
+
       },
       coordinates: {
         type: [Number], // [longitude, latitude]
-        
+
       },
     },
 

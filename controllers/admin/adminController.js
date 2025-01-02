@@ -118,7 +118,7 @@ const getAdmins = async (req, res) => {
 
 
     const admins = await User.find(
-      { role: "admin", ...filter },
+      { role: "user", ...filter },
       {
         password: 0,
         dateOfBirth: 0,
@@ -134,7 +134,7 @@ const getAdmins = async (req, res) => {
     //   throw Error(`No ${true ? "active" : "blocked"} admin`);
     // }
     const totalAvailableAdmins = await User.countDocuments({
-      role: "admin",
+      role: "user",
       ...filter
     }
     );
@@ -209,7 +209,7 @@ const addAdmin = async (req, res) => {
       });
     }
 
-    const user = await User.signup(userCredentials, "admin", true);
+    const user = await User.signup(userCredentials, "user", true);
 
     res.status(200).json(user);
   } catch (error) {
@@ -283,7 +283,6 @@ const updateAdmin = async (req, res) => {
     if (!admin) {
       throw Error("No Such Admin");
     }
-    console.log(admin.name);
 
 
     res.status(200).json({ admin });
