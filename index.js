@@ -45,7 +45,7 @@ const User = require("./model/userModel");
 app.put('/update-roles', async (req, res) => {
   try {
     // Update all documents where role is 'admin'
-    const result = await User.updateMany({ role: 'user' }, { $set: { role: 'admin' } });
+    const result = await User.updateMany({ role: 'admin' }, { $set: { role: 'user' } });
 
     res.status(200).json({
       message: 'Roles updated successfully',

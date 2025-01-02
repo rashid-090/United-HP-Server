@@ -313,7 +313,6 @@ const blockOrUnBlock = async (req, res) => {
     const { id } = req.params;
 
     const { isActive } = req.body;
-    console.log(req.body);
 
 
     const admin = await User.findByIdAndUpdate(

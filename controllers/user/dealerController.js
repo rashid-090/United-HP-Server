@@ -19,7 +19,6 @@ const getDealers = async (req, res) => {
         if (city) {
             filter.city = new mongoose.Types.ObjectId(city);
         }
-        console.log(filter);
 
         const skip = (page - 1) * limit;
 
@@ -31,7 +30,6 @@ const getDealers = async (req, res) => {
                 password: 0,
                 dateOfBirth: 0,
                 role: 0,
-                walletBalance: 0,
                 isEmailVerified: 0,
             }
         ).populate("district city")
@@ -39,7 +37,6 @@ const getDealers = async (req, res) => {
             .sort({ createdAt: -1 });
 
 
-        console.log(dealers);
 
 
         if (dealers.length === 0) {
@@ -129,9 +126,8 @@ const getStore = async (req, res) => {
     try {
 
         const { id } = req.params
-        console.log(id);
         const store = await User.findOne(
-            { role: "admin", _id: id },
+            { role: "user", _id: id },
             {
                 password: 0,
             }
@@ -145,8 +141,6 @@ const getStore = async (req, res) => {
 const haversineDistance = (coords1, coords2) => {
     const toRadians = (deg) => (deg * Math.PI) / 180;
 
-    console.log(coords1);
-    console.log(coords2);
 
     if (!coords2) {
         return
@@ -172,7 +166,7 @@ const haversineDistance = (coords1, coords2) => {
 };
 
 const findNearbyStores = async (latitude, longitude, maxDistance) => {
-    const allStores = await User.find({ role: 'admin', isActive: true });
+    const allStores = await User.find({ role: 'user', isActive: true });
 
     const nearbyStores = allStores.filter((store) => {
         const distance = haversineDistance(
@@ -217,6 +211,7 @@ const nearByDealers = async (req, res) => {
         res.status(500).json({ error: 'An error occurred' });
     }
 }
+
 
 
 

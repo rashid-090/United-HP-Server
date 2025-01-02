@@ -106,7 +106,6 @@ UserSchema.statics.signup = async function (
     userCredentials;
 
 
-  console.log(userCredentials);
 
   if (
     !name ||
@@ -224,7 +223,6 @@ UserSchema.statics.changePassword = async function (
   const hash = await bcrypt.hash(password, salt);
 
   let user = await this.updateOne({ _id }, { $set: { password: hash } });
-  console.log(user);
 
   user.password = "";
 

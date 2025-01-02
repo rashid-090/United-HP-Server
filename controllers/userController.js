@@ -111,7 +111,6 @@ const editUser = async (req, res) => {
 
     if (profileImgURL) {
       formData = { ...formData, profileImgURL: profileImgURL };
-      console.log(formData);
 
     }
 
