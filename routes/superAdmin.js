@@ -1,22 +1,22 @@
 const express = require("express");
-const { getAdmins, addAdmin, getAdmin, blockOrUnBlock, updateAdmin, deleteAdmin } = require("../controllers/admin/adminController");
+const { getUsers, addUser, getUser, blockOrUnBlockUser, updateUser, deleteUser } = require("../controllers/admin/userController");
 const upload = require("../middleware/upload");
 const { createDistrict, getDistricts, updateDistrict, deleteDistrict } = require("../controllers/admin/districtController");
 const { createCity, getCities, updateCity, deleteCity } = require("../controllers/admin/cityController");
 const { authenticateUser, verifySuperAdmin } = require("../middleware/authMiddleware");
+const { getAdmins, getAdmin, deleteAdmin, updateAdmin, addAdmin, blockOrUnBlockAdmin } = require("../controllers/superAdmin/AdminController");
 
 
 
 const router = express.Router();
 
 // Address
-router.get("/user", getAdmins);
-router.get("/user/:id", getAdmin);
-router.delete("/user/:id", deleteAdmin);
-router.patch("/user/:id", upload.any(), updateAdmin);
-router.post("/user", upload.any(), addAdmin);
-// router.patch("/admin-block-unblock/:id", blockOrUnBlock);
-router.patch("/block-or-unblock/:id", blockOrUnBlock)
+router.get("/user", getUsers);
+router.get("/user/:id", getUser);
+router.delete("/user/:id", deleteUser);
+router.patch("/user/:id", upload.any(), updateUser);
+router.post("/user", upload.any(), addUser);
+router.patch("/block-or-unblock-user/:id", blockOrUnBlockUser)
 
 
 // district
@@ -31,8 +31,18 @@ router.get("/cities", getCities)
 router.patch("/city/:id", updateCity)
 router.delete("/city/:id", deleteCity)
 
+
+router.get("/admin", getAdmins);
+router.get("/admin/:id", getAdmin);
+router.delete("/admin/:id", deleteAdmin);
+router.patch("/admin/:id", upload.any(), updateAdmin);
+router.post("/admin", upload.any(), addAdmin);
+router.patch("/block-or-unblock-admin/:id", blockOrUnBlockAdmin)
+
+
+
 // Permissions
-// router.get("/permissions", authenticateUser, getPermissions); // List all permissions
+// router.get("/permissioans", authenticateUser, getPermissions); // List all permissions
 // router.post("/permissions", authenticateUser, verifySuperAdmin, addPermission); // Add a new permission
 // router.patch("/permissions/:id", authenticateUser, verifySuperAdmin, updatePermission); // Update a permission
 // router.delete("/permissions/:id", authenticateUser, verifySuperAdmin, deletePermission); // Delete a permission

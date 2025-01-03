@@ -38,8 +38,24 @@ const UserSchema = new Schema(
     },
     permissions: {
       type: [String],
+
       default: []
     }, // Array to store permissions
+
+    permissions: {
+      manageBanner: {
+        type: Boolean,
+        default: false,
+      },
+      manageLocation: {
+        type: Boolean,
+        default: false,
+      },
+      manageDealers : {
+        type: Boolean,
+        default: false,
+      },
+    },
     openingTime: {
       type: String
     },

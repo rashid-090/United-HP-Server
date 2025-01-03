@@ -55,8 +55,8 @@ const extractLatLongFromUrl = (url) => {
   }
 };
 
-// Getting all Admins to list on super admin dashboard
-const getAdmins = async (req, res) => {
+// Getting all Users to list on super admin dashboard
+const getUsers = async (req, res) => {
   try {
     const {
       status,
@@ -103,21 +103,23 @@ const getAdmins = async (req, res) => {
       filter.city = city; // City district filter
     }
 
+    // Search filter
     if (search) {
-      if (search.includes(" ")) {
-        filter.search = { $regex: new RegExp(search, "i") };
-      } else {
-        filter.$or = [
-          { name: { $regex: new RegExp(search, "i") } },
-          { email: { $regex: new RegExp(search, "i") } },
-
-        ];
-      }
+      // If search contains spaces, match all parts (e.g., "John Doe" should match "John" and "Doe")
+      const searchRegex = search
+        .split(" ")
+        .map((word) => `(?=.*${word})`) // Create a regex to match each word
+        .join(""); // Join with no space in between
+      filter.$or = [
+        { name: { $regex: searchRegex, $options: "i" } },
+        { email: { $regex: searchRegex, $options: "i" } },
+      ];
     }
+
     const skip = (page - 1) * limit;
 
 
-    const admins = await User.find(
+    const users = await User.find(
       { role: "user", ...filter },
       {
         password: 0,
@@ -130,42 +132,42 @@ const getAdmins = async (req, res) => {
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 });
-    // if (admins.length === 0) {
-    //   throw Error(`No ${true ? "active" : "blocked"} admin`);
+    // if (users.length === 0) {
+    //   throw Error(`No ${true ? "active" : "blocked"} users`);
     // }
-    const totalAvailableAdmins = await User.countDocuments({
+    const totalAvailableUsers = await User.countDocuments({
       role: "user",
       ...filter
     }
     );
-    res.status(200).json({ admins, totalAvailableAdmins });
+    res.status(200).json({ users, totalAvailableUsers });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-const getAdmin = async (req, res) => {
+const getUser = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const admin = await User.findOne({ _id: id },
+    const user = await User.findOne({ _id: id },
       {
         password: 0
       }
     )
 
-    if (!admin) {
-      throw Error("No Such Admin");
+    if (!user) {
+      throw Error("No Such User");
     }
 
-    res.status(200).json({ admin });
+    res.status(200).json({ user });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-// Creating new Admin if needed for Super Admin
-const addAdmin = async (req, res) => {
+// Creating new User if needed for Super Admin
+const addUser = async (req, res) => {
   try {
     const userCredentials = req.body;
 
@@ -217,7 +219,7 @@ const addAdmin = async (req, res) => {
   }
 };
 
-const updateAdmin = async (req, res) => {
+const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
     const data = req.body;
@@ -273,54 +275,54 @@ const updateAdmin = async (req, res) => {
       data.imgURL = existingImgURLs;
     }
 
-    // Update the admin data in the database
-    const admin = await User.findByIdAndUpdate(
+    // Update the user data in the database
+    const user = await User.findByIdAndUpdate(
       id,
       { $set: { ...data } },
       { new: true }
     );
 
-    if (!admin) {
-      throw Error("No Such Admin");
+    if (!user) {
+      throw Error("No Such User");
     }
 
 
-    res.status(200).json({ admin });
+    res.status(200).json({ user });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
 
-const deleteAdmin = async (req, res) => {
+const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const admin = await User.findOneAndDelete({ _id: id });
+    const user = await User.findOneAndDelete({ _id: id });
 
-    if (!admin) {
-      throw Error("No Such Admin");
+    if (!user) {
+      throw Error("No Such User");
     }
 
-    res.status(200).json({ admin });
+    res.status(200).json({ user });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-const blockOrUnBlock = async (req, res) => {
+const blockOrUnBlockUser = async (req, res) => {
   try {
     const { id } = req.params;
 
     const { isActive } = req.body;
 
 
-    const admin = await User.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
       id,
       { $set: { isActive } },
       { new: true }
     );
-    res.status(200).json({ admin });
+    res.status(200).json({ user });
 
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -328,10 +330,10 @@ const blockOrUnBlock = async (req, res) => {
 };
 
 module.exports = {
-  getAdmins,
-  getAdmin,
-  addAdmin,
-  deleteAdmin,
-  updateAdmin,
-  blockOrUnBlock,
+  getUsers,
+  getUser,
+  addUser,
+  deleteUser,
+  updateUser,
+  blockOrUnBlockUser,
 };

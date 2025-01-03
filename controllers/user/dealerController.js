@@ -183,7 +183,7 @@ const findNearbyStores = async (latitude, longitude, maxDistance) => {
 const nearByDealers = async (req, res) => {
     try {
         const { latitude, longitude, page = 1, limit = 6 } = req.query;
-        const maxDistance = 5; // 5 km radius
+        const maxDistance = 20; // 5 km radius
 
         // Parse page and limit to ensure they're integers
         const pageNumber = Math.max(1, parseInt(page, 10));
