@@ -5,6 +5,7 @@ const { createDistrict, getDistricts, updateDistrict, deleteDistrict } = require
 const { createCity, getCities, updateCity, deleteCity } = require("../controllers/admin/cityController");
 const { authenticateUser, verifySuperAdmin } = require("../middleware/authMiddleware");
 const { getAdmins, getAdmin, deleteAdmin, updateAdmin, addAdmin, blockOrUnBlockAdmin } = require("../controllers/superAdmin/AdminController");
+const { readBanners, addBanners, updateBannerOrder, deleteBanner } = require("../controllers/superAdmin/BannerController");
 
 
 
@@ -38,6 +39,15 @@ router.delete("/admin/:id", deleteAdmin);
 router.patch("/admin/:id", upload.any(), updateAdmin);
 router.post("/admin", upload.any(), addAdmin);
 router.patch("/block-or-unblock-admin/:id", blockOrUnBlockAdmin)
+
+
+
+
+router.get("/banners",readBanners)
+router.post("/banners", upload.any(), addBanners);
+router.patch("/banners/", updateBannerOrder);
+router.delete("/banner/:id", deleteBanner);
+
 
 
 

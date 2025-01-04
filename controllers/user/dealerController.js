@@ -2,6 +2,7 @@ const District = require("../../model/districtModel");
 const mongoose = require("mongoose");
 const User = require("../../model/userModel");
 const City = require("../../model/cityModel");
+const Banner = require("../../model/bannerModel");
 
 const getDealers = async (req, res) => {
     try {
@@ -211,6 +212,17 @@ const nearByDealers = async (req, res) => {
         res.status(500).json({ error: 'An error occurred' });
     }
 }
+const readBanners = async (req, res) => {
+    try {
+        const banners = await Banner.findOne();
+
+        return res.status(200).json({ banners });
+    } catch (error) {
+        console.log(error);
+
+        res.status(400).json({ error: error.message });
+    }
+};
 
 
 
@@ -221,5 +233,6 @@ module.exports = {
     getCities,
     getDistricts,
     getStore,
-    nearByDealers
+    nearByDealers,
+    readBanners
 }

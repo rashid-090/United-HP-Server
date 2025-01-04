@@ -173,31 +173,33 @@ const updateAdmin = async (req, res) => {
     try {
         const { id } = req.params;
         const data = req.body;
-
         const files = req?.files;
 
+        // Fetch the current admin data
+        const currentAdmin = await User.findById(id);
+        if (!currentAdmin) {
+            throw new Error("No Such Admin");
+        }
 
+        // Check if the email is being updated
+        if (data.email && data.email !== currentAdmin.email) {
+            // Check if the new email is already in use by another user
+            const emailExists = await User.findOne({ email: data.email });
+            if (emailExists) {
+                return res.status(400).json({ error: "Email already in use" });
+            }
+        }
 
-
-
-
-        // Check if there are files to update
+        // Handle file uploads (if any)
         if (files && files.length > 0) {
-            // If the existing data has imgURL, preserve it and add the new images
-            const existingImgURLs = data.imgURL || [];
-
-            // Add new images to the imgURL array without overwriting existing ones
+            const existingImgURLs = currentAdmin.imgURL || [];
             files.forEach((file) => {
                 if (file.fieldname === "imgURL[]") {
-                    // Add only the file's filename (not the full URL) to imgURL
                     existingImgURLs.push(file.filename);
                 } else {
-                    // Add file to imgURL if it's a temporary image
                     existingImgURLs.push(file.filename);
                 }
             });
-
-            // Update the imgURL field with the combined list of old and new images
             data.imgURL = existingImgURLs;
         }
 
@@ -209,17 +211,16 @@ const updateAdmin = async (req, res) => {
         );
 
         if (!admin) {
-            throw Error("No Such Admin");
+            throw new Error("No Such Admin");
         }
-
 
         res.status(200).json({ admin });
     } catch (error) {
         console.log(error);
-
         res.status(400).json({ error: error.message });
     }
 };
+
 
 
 const deleteAdmin = async (req, res) => {
