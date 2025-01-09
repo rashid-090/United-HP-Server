@@ -6,6 +6,8 @@ const { createCity, getCities, updateCity, deleteCity } = require("../controller
 const { authenticateUser, verifySuperAdmin } = require("../middleware/authMiddleware");
 const { getAdmins, getAdmin, deleteAdmin, updateAdmin, addAdmin, blockOrUnBlockAdmin } = require("../controllers/superAdmin/AdminController");
 const { readBanners, addBanners, updateBannerOrder, deleteBanner } = require("../controllers/superAdmin/BannerController");
+const { getEnquiriesById, getEnquiryById, getAllPendingEnquiries } = require("../controllers/superAdmin/EnquiryController");
+const { getPendingEnquiries, getAllEnquiries } = require("../controllers/dealer/dealerController");
 
 
 
@@ -43,10 +45,18 @@ router.patch("/block-or-unblock-admin/:id", blockOrUnBlockAdmin)
 
 
 
-router.get("/banners",readBanners)
+
+router.get("/banners", readBanners)
 router.post("/banners", upload.any(), addBanners);
 router.patch("/banners/", updateBannerOrder);
 router.delete("/banner/:id", deleteBanner);
+
+
+router.get("/all-enquiries", getAllEnquiries)
+router.get("/all-pending-enquiries", getAllPendingEnquiries)
+router.get("/enquiries/:id", getEnquiriesById)
+router.get("/pending-enquiries/:id", getPendingEnquiries)
+router.get("/enquiry/:id", getEnquiryById)
 
 
 

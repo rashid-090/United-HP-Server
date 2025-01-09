@@ -2,6 +2,7 @@ const express = require("express");
 const upload = require("../middleware/upload");
 const { getUserDataFirst, logoutUser, changePassword, editUser } = require("../controllers/userController");
 const { getDealers, getCities, getDistricts, getStore, nearByDealers, readBanners } = require("../controllers/user/dealerController");
+const { createEnquiry } = require("../controllers/user/enquiryController");
 
 
 const router = express.Router();
@@ -24,9 +25,12 @@ router.get("/store/:id", getStore)
 // Edit User profile
 router.post("/edit-profile", upload.single("profileImgURL"), editUser);
 
-router.get('/nearby-dealers',nearByDealers)
+router.get('/nearby-dealers', nearByDealers)
 
-router.get("/banners",readBanners)
+router.get("/banners", readBanners)
+    
+
+router.post("/enquiry", createEnquiry)
 
 
 module.exports = router;

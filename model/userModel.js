@@ -6,59 +6,63 @@ const City = require("./cityModel");
 
 const { Schema } = mongoose;
 
-  const UserSchema = new Schema(
-    {
-      name: {
-        type: String,
-        required: true,
-        unique: true
-      },
-      email: {
-        type: String,
-        required: true,
-        unique: true,
-      },
-      password: {
-        type: String,
-      },
-      address: {
-        type: String,
-      },
-      contactNumber: {
-        type: Number,
-      },
-      pinCode: {
-        type: Number
-      },
-      gMapLink: {
-        type: String
-      },
-      gMapLinkShorten: {
-        type: String
-      },
-      permissions: {
-        type: [String],
+const UserSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      unique: true
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    password: {
+      type: String,
+    },
+    address: {
+      type: String,
+    },
+    contactNumber: {
+      type: Number,
+    },
+    pinCode: {
+      type: Number
+    },
+    gMapLink: {
+      type: String
+    },
+    gMapLinkShorten: {
+      type: String
+    },
+    permissions: {
+      type: [String],
 
-        default: []
-      }, // Array to store permissions
+      default: []
+    }, // Array to store permissions
 
-      permissions: {
-        manageBanner: {
-          type: Boolean,
-          default: false,
-        },
-        manageLocation: {
-          type: Boolean,
-          default: false,
-        },
-        manageDealers: {
-          type: Boolean,
-          default: false,
-        },
+    permissions: {
+      manageBanner: {
+        type: Boolean,
+        default: false,
       },
-      openingTime: {
-        type: String
+      manageLocation: {
+        type: Boolean,
+        default: false,
       },
+      manageDealers: {
+        type: Boolean,
+        default: false,
+      },
+      manageEnquiries: {
+        type: Boolean,
+        default: false,
+      },
+    },
+    openingTime: {
+      type: String
+    },
     closingTime: {
       type: String
     },

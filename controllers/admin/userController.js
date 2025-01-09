@@ -83,6 +83,17 @@ const getUsers = async (req, res) => {
       }
     }
 
+    
+    // District filter
+    if (district) {
+      filter.district = district; // Direct district filter
+    }
+    
+    // CIty filter
+    if (city) {
+      filter.city = city; // City district filter
+    }
+    
     // Date
     if (startingDate) {
       const date = new Date(startingDate);
@@ -92,17 +103,6 @@ const getUsers = async (req, res) => {
       const date = new Date(endingDate);
       filter.createdAt = { ...filter.createdAt, $lte: date };
     }
-
-    // District filter
-    if (district) {
-      filter.district = district; // Direct district filter
-    }
-
-    // CIty filter
-    if (city) {
-      filter.city = city; // City district filter
-    }
-
     // Search filter
     if (search) {
       // If search contains spaces, match all parts (e.g., "John Doe" should match "John" and "Doe")
