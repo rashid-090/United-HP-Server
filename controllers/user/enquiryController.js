@@ -11,7 +11,7 @@ const createEnquiry = async (req, res) => {
 
         // Validate required fields
         if (!name || !mobile) {
-            return res.status(400).json({ message: "Name, and mobile are required" });
+            return res.status(400).json({ message: "Name, and mobile a  re required" });
         }
 
         // Create a new enquiry
@@ -24,6 +24,9 @@ const createEnquiry = async (req, res) => {
 
         // Save the enquiry to the database
         const savedEnquiry = await newEnquiry.save();
+
+        // Emit the new enquiry event
+        // req.io.emit("new-enquiry", savedEnquiry);
 
         return res.status(201).json({
             message: "Enquiry created successfully",

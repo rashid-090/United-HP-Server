@@ -105,13 +105,30 @@ const editUser = async (req, res) => {
       throw Error("Invalid ID!!!");
     }
 
-    let formData = req.body;
+
+
+    const sanitizeInput = (data) => {
+      if (data.contactNumber === "null" || data.contactNumber === "") {
+        data.contactNumber = null;
+      }
+      return data;
+    };
+    
+    // Use this in your controller
+    let formData = sanitizeInput(req.body);
 
     const profileImgURL = req?.file?.filename;
 
     if (profileImgURL) {
       formData = { ...formData, profileImgURL: profileImgURL };
+    }
 
+    // Check if the new email already exists
+    if (formData.email) {
+      const emailExists = await User.findOne({ email: formData.email, _id: { $ne: _id } });
+      if (emailExists) {
+        throw Error("Email already in use!");
+      }
     }
 
     const updatedUser = await User.findOneAndUpdate(
@@ -131,6 +148,7 @@ const editUser = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
 
 const changePassword = async (req, res) => {
   try {

@@ -3,7 +3,7 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors"); // Add it back when communicating with react
 const logger = require("morgan");
-const socketIo = require("socket.io");
+const { Server } = require("socket.io");
 const http = require("http")
 const mongoose = require("mongoose");
 
@@ -33,12 +33,34 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Create an HTTP server to handle requests
-const server = http.createServer(app);
+// const server = http.createServer(app);
 
-const io = socketIo(server);
+// const io = new Server(server, {
+//   cors: {
+//     origin: 'http://localhost:7000',
+//     methods: ['GET', 'POST']
+//   }
+// });
 
 app.use(express.json());
 app.use(logger("dev"));
+
+
+// // Socket.IO Setup
+// io.on('connection', (socket) => {
+//   console.log('A user connected');
+//   socket.on('disconnect', () => {
+//     console.log('A user disconnected');
+//   });
+// });
+
+
+// // Middleware to emit events
+// app.use((req, res, next) => {
+
+//   req.io = io; // Attach `io` instance to `req` for emitting events
+//   next();
+// });
 
 // const adminRoutes = require("./routes/admin");
 const superAdminRoutes = require("./routes/superAdmin");

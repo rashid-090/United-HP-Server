@@ -29,7 +29,7 @@ const getCities = async (req, res) => {
         const cities = await City.find(filter)
             .populate("district") // Populate district details
             .skip(skip)
-            .limit(limit);
+
 
         // Count total cities matching the filters
         const totalAvailableCities = await City.countDocuments(filter);
