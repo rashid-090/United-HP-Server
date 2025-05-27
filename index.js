@@ -6,6 +6,7 @@ const logger = require("morgan");
 const { Server } = require("socket.io");
 const http = require("http")
 const mongoose = require("mongoose");
+const userModel = require("./model/userModel");
 
 
 const app = express();
@@ -68,6 +69,10 @@ const authRoutes = require("./routes/auth");
 const userRoutes = require('./routes/user');
 const dealerRoutes = require('./routes/dealer');
 const { authenticateUser } = require("./middleware/authMiddleware");
+const District = require("./model/districtModel");
+const City = require("./model/cityModel");
+const User = require("./model/userModel");
+const Product = require("./model/productModel");
 
 
 
@@ -78,7 +83,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/super-admin", superAdminRoutes);
 app.use("/api/dealer", authenticateUser, dealerRoutes);
-
 
 
 // Handle socket connections

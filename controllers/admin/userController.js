@@ -61,6 +61,8 @@ const getUsers = async (req, res) => {
     const {
       status,
       search,
+      brand,
+      state,
       district,
       city,
       page = 1,
@@ -69,7 +71,6 @@ const getUsers = async (req, res) => {
       endingDate,
 
     } = req.query;
-
 
 
 
@@ -83,17 +84,26 @@ const getUsers = async (req, res) => {
       }
     }
 
-    
+    // Brand filter
+    if (brand) {
+      filter.brand = brand; // Brand filter
+    }
+
+    // State filter
+    if (state) {
+      filter.state = state; // Direct state filter
+    }
+
     // District filter
     if (district) {
       filter.district = district; // Direct district filter
     }
-    
+
     // CIty filter
     if (city) {
       filter.city = city; // City district filter
     }
-    
+
     // Date
     if (startingDate) {
       const date = new Date(startingDate);
@@ -128,7 +138,7 @@ const getUsers = async (req, res) => {
         walletBalance: 0,
         isEmailVerified: 0,
       }
-    ).populate('district city')
+    ).populate('district city state')
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 });
@@ -170,7 +180,7 @@ const getUser = async (req, res) => {
 const addUser = async (req, res) => {
   try {
     const userCredentials = req.body;
-
+    console.log(userCredentials)
     const files = req?.files;
 
     if (userCredentials.gMapLinkShorten) {
@@ -223,7 +233,7 @@ const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
     const data = req.body;
-
+    console.log(req.body)
     const files = req?.files;
 
 

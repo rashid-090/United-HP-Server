@@ -6,13 +6,23 @@ const Banner = require("../../model/bannerModel");
 
 const getDealers = async (req, res) => {
     try {
-        const { district, city, page = 1, limit = 6,
+        const { state, district, city, brand, page = 1, limit = 6,
         } = req.query;
 
 
         let filter = {};
+        console.log(req.query)
 
-        // Convert district and city to ObjectId if they are provided
+        if(brand){
+            filter.brand = brand; // Brand filter
+        }
+
+
+        // Convert state, district and city to ObjectId if they are provided
+        if (state) {
+            filter.state = new mongoose.Types.ObjectId(state);
+        }
+
         if (district) {
             filter.district = new mongoose.Types.ObjectId(district);
         }
@@ -33,7 +43,7 @@ const getDealers = async (req, res) => {
                 role: 0,
                 isEmailVerified: 0,
             }
-        ).populate("district city")
+        ).populate("state district city")
             .skip(skip).limit(limit)
             .sort({ createdAt: -1 });
 

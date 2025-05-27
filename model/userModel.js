@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const validator = require("validator");
 const District = require("./districtModel");
 const City = require("./cityModel");
+const State = require("./stateModel");
 
 const { Schema } = mongoose;
 
@@ -36,11 +37,11 @@ const UserSchema = new Schema(
     gMapLinkShorten: {
       type: String
     },
-    permissions: {
-      type: [String],
+    // permissions: {
+    //   type: [String],
 
-      default: []
-    }, // Array to store permissions
+    //   default: []
+    // }, // Array to store permissions
 
     permissions: {
       manageBanner: {
@@ -71,6 +72,13 @@ const UserSchema = new Schema(
     },
     profileImgURL: {
       type: String
+    },
+    brand: {
+      type: String
+    },
+    state: {
+      type: Schema.Types.ObjectId,
+      ref: State,
     },
     district: {
       type: Schema.Types.ObjectId,

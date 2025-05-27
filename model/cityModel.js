@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const District = require("./districtModel");
+const State = require("./stateModel");
 
 const { Schema } = mongoose;
 
@@ -13,6 +14,10 @@ const CitySchema = new Schema(
     district: {
       type: Schema.Types.ObjectId,
       ref: District,
+    },
+    state: {
+      type: Schema.Types.ObjectId,
+      ref: State,
     },
     isActive: {
       type: Boolean,

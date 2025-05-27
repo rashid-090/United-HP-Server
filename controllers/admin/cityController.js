@@ -47,6 +47,8 @@ const createCity = async (req, res) => {
     try {
         let formData = req.body;
 
+        console.log("Response from ", formData)
+
         const city = await City.create(formData);
 
         res.status(200).json({ city });

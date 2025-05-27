@@ -8,10 +8,23 @@ const { getAdmins, getAdmin, deleteAdmin, updateAdmin, addAdmin, blockOrUnBlockA
 const { readBanners, addBanners, updateBannerOrder, deleteBanner } = require("../controllers/superAdmin/BannerController");
 const { getEnquiriesById, getEnquiryById, getAllPendingEnquiries } = require("../controllers/superAdmin/EnquiryController");
 const { getPendingEnquiries, getAllEnquiries } = require("../controllers/dealer/dealerController");
+const { getStates, createState, updateState, deleteState } = require("../controllers/admin/stateController");
+const { getProducts, getSingleProduct, updateProduct, newProduct, deleteProduct } = require("../controllers/admin/productController");
 
 
 
 const router = express.Router();
+
+// Products
+router.get("/products", getProducts);
+router.get("/product/:id", getSingleProduct);
+router.delete("/product/:id", deleteProduct);
+router.patch("/product/:id", upload.any(), updateProduct);
+router.post("/product", upload.any(), newProduct);
+
+
+
+
 
 // Address
 router.get("/user", getUsers);
@@ -33,6 +46,12 @@ router.post("/city", createCity)
 router.get("/cities", getCities)
 router.patch("/city/:id", updateCity)
 router.delete("/city/:id", deleteCity)
+
+// states
+router.post("/state", createState)
+router.get("/states", getStates)
+router.patch("/state/:id", updateState)
+router.delete("/state/:id", deleteState)
 
 
 router.get("/admin", getAdmins);

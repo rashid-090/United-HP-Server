@@ -23,7 +23,8 @@ const getDistricts = async (req, res) => {
 
         const skip = (page - 1) * limit;
 
-        const districts = await District.find(filter).skip(skip).sort({ name: 1 });
+        const districts = await District.find(filter).populate("state") // Populate district details
+        .skip(skip).sort({ name: 1 });
 
         const totalAvailableDistricts = await District.countDocuments(filter);
 
@@ -37,7 +38,6 @@ const getDistricts = async (req, res) => {
 const createDistrict = async (req, res) => {
     try {
         let formData = req.body;
-
 
         const district = await District.create(formData);
 
@@ -56,10 +56,6 @@ const updateDistrict = async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(id)) {
             throw Error("Invalid ID!!!");
         }
-
-
-
-
 
         const district = await District.findOneAndUpdate(
             { _id: id },

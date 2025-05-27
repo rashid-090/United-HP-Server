@@ -3,6 +3,7 @@ const upload = require("../middleware/upload");
 const { getUserDataFirst, logoutUser, changePassword, editUser } = require("../controllers/userController");
 const { getDealers, getCities, getDistricts, getStore, nearByDealers, readBanners } = require("../controllers/user/dealerController");
 const { createEnquiry } = require("../controllers/user/enquiryController");
+const { getProducts } = require("../controllers/user/productController");
 
 
 const router = express.Router();
@@ -12,6 +13,8 @@ router.get("/", getUserDataFirst);
 
 // Logout
 router.get("/logout", logoutUser);
+
+router.get("/products", getProducts)
 
 // Change User Password
 router.post("/change-password", changePassword);
