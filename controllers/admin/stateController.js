@@ -1,3 +1,5 @@
+const City = require("../../model/cityModel");
+const District = require("../../model/districtModel");
 const State = require("../../model/stateModel");
 const mongoose = require("mongoose");
 
@@ -87,13 +89,31 @@ const deleteState = async (req, res) => {
             throw Error("Invalid ID!!!");
         }
 
+        // First, find all districts under the state
+        const districts = await District.find({ state: id });
+
+        // Extract district IDs
+        const districtIds = districts.map((district) => district._id);
+
+        // Delete all cities under this state or under its districts
+        await City.deleteMany({
+            $or: [
+                { state: id },
+                { district: { $in: districtIds } },
+            ],
+        });
+
+        // Delete all districts under this state
+        await District.deleteMany({ state: id });
+
+        // Delete the state
         const state = await State.findOneAndDelete({ _id: id });
 
         if (!state) {
             throw Error("No Such State");
         }
 
-        res.status(200).json({ state });
+        res.status(200).json({ message: "State, Districts, and Cities deleted successfully", state });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }

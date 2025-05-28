@@ -33,35 +33,11 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// Create an HTTP server to handle requests
-// const server = http.createServer(app);
-
-// const io = new Server(server, {
-//   cors: {
-//     origin: 'http://localhost:7000',
-//     methods: ['GET', 'POST']
-//   }
-// });
 
 app.use(express.json());
 app.use(logger("dev"));
 
 
-// // Socket.IO Setup
-// io.on('connection', (socket) => {
-//   console.log('A user connected');
-//   socket.on('disconnect', () => {
-//     console.log('A user disconnected');
-//   });
-// });
-
-
-// // Middleware to emit events
-// app.use((req, res, next) => {
-
-//   req.io = io; // Attach `io` instance to `req` for emitting events
-//   next();
-// });
 
 // const adminRoutes = require("./routes/admin");
 const superAdminRoutes = require("./routes/superAdmin");
@@ -69,10 +45,7 @@ const authRoutes = require("./routes/auth");
 const userRoutes = require('./routes/user');
 const dealerRoutes = require('./routes/dealer');
 const { authenticateUser } = require("./middleware/authMiddleware");
-const District = require("./model/districtModel");
-const City = require("./model/cityModel");
-const User = require("./model/userModel");
-const Product = require("./model/productModel");
+
 
 
 

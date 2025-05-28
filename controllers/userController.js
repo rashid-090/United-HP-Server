@@ -7,9 +7,9 @@ const createToken = (_id, role, permissions) => {
 };
 
 const cookieConfig = {
-  sameSite: "none", // in order to response to both first-party and cross-site requests
-  secure: "auto", // it should set automatically to secure if is https.
   httpOnly: true,
+  secure: true,        // make sure your site uses HTTPS
+  sameSite: "none",    // only for cross-site cookies
   maxAge: 1000 * 60 * 60 * 24,
 };
 
