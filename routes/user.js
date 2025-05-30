@@ -14,7 +14,7 @@ router.get("/", getUserDataFirst);
 // Logout
 router.get("/logout", logoutUser);
 
-router.get("/products", getProducts)
+router.get("/products/:slug", getProducts)
 
 // Change User Password
 router.post("/change-password", changePassword);

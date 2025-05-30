@@ -203,7 +203,6 @@ UserSchema.statics.login = async function (email, password) {
   }
 
   let user = await this.findOne({ email });
-  console.log(user);
 
   // let user = await this.findOne({ email, isActive: true });
 

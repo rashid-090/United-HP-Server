@@ -11,7 +11,6 @@ const getDealers = async (req, res) => {
 
 
         let filter = {};
-        console.log(req.query)
 
         if(brand){
             filter.brand = brand; // Brand filter

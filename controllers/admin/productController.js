@@ -5,11 +5,10 @@ const Product = require("../../model/productModel");
 
 // Create new product => /api/v1/admin/product/new
 exports.newProduct = async (req, res, next) => {
-    const { name, type } = req.body;
+    const { name, parentCategory, subCategory } = req.body;
     const files = req?.files;
 
     let imageURL = "";
-    console.log(files);
     if (files && files.length > 0) {
         imageURL = files[0].path; // Assuming the first file is the product image
     }
@@ -17,8 +16,9 @@ exports.newProduct = async (req, res, next) => {
 
     const product = await Product.create({
         name,
-        type,
-        imageURL
+        imageURL,
+        parentCategory,
+        subCategory,
     });
 
     res.status(201).json({
@@ -35,7 +35,10 @@ exports.getProducts = async (req, res, next) => {
         const skip = (page - 1) * limit;
 
         const total = await Product.countDocuments();
-        const products = await Product.find().skip(skip).limit(limit);
+        const products = await Product.find()
+            .sort({ createdAt: -1 }) // Sort by newest first
+            .skip(skip)
+            .limit(limit);
 
         res.status(200).json({
             success: true,
@@ -73,7 +76,6 @@ exports.updateProduct = async (req, res, next) => {
     const files = req?.files;
 
 
-    console.log(files);
     if (files && files.length > 0) {
         req.body.imageURL = files[0].path; // Assuming the first file is the product image
     }

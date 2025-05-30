@@ -4,7 +4,6 @@ const Banner = require("../../model/bannerModel");
 const addBanners = async (req, res) => {
     try {
         const files = req?.files;
-         console.log("Logged from adding banner ", files);
 
 
         // Check if files are uploaded

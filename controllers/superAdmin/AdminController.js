@@ -144,7 +144,6 @@ const getAdmin = async (req, res) => {
 // Creating new Admin if needed for Super Admin
 const addAdmin = async (req, res) => {
     try {
-        console.log(req.body);
 
         const userCredentials = req.body;
         const files = req?.files;

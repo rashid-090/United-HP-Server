@@ -180,14 +180,12 @@ const getUser = async (req, res) => {
 const addUser = async (req, res) => {
   try {
     const userCredentials = req.body;
-    console.log(userCredentials)
     const files = req?.files;
 
     if (userCredentials.gMapLinkShorten) {
       try {
         const fullUrl = await getFullGoogleMapsUrl(userCredentials.gMapLinkShorten); // Wait for the full URL
         userCredentials.gMapLink = fullUrl; // Update the gMapLink field
-        console.log("Full URL:", fullUrl);
         const { lat, lng } = extractLatLongFromUrl(fullUrl);
 
         if (lat && lng) {
@@ -233,7 +231,6 @@ const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
     const data = req.body;
-    console.log(req.body)
     const files = req?.files;
 
 
